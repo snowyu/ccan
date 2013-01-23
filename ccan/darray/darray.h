@@ -110,6 +110,8 @@
  * all macros evaluate their non-darray arguments only once.
  */
 
+#define DARRAY_MIN_GROWING_SIZE 64
+
 /*** Life cycle ***/
 
 #define darray(type) struct {type *item; size_t size; size_t alloc;}
@@ -246,6 +248,9 @@ typedef darray(unsigned long)  darray_ulong;
 
 
 /*** Size management ***/
+#ifndef roundup32
+#define roundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
+#endif
 
 #define darray_resize(arr, newSize) darray_growalloc(arr, (arr).size = (newSize))
 #define darray_resize0(arr, newSize) do { \
@@ -262,14 +267,18 @@ typedef darray(unsigned long)  darray_ulong;
 	} while(0)
 #define darray_growalloc(arr, need) do { \
 		size_t __need = (need); \
-		if (__need > (arr).alloc) \
-			darray_realloc(arr, darray_next_alloc((arr).alloc, __need)); \
+		if (__need > (arr).alloc) {\
+            if ((__need - (arr).alloc) < DARRAY_MIN_GROWING_SIZE) \
+                __need = (arr).alloc + DARRAY_MIN_GROWING_SIZE; \
+			darray_realloc(arr, roundup32(__need)); \
+        } \
 	} while(0)
 
 #if HAVE_STATEMENT_EXPR==1
 #define darray_make_room(arr, room) ({size_t newAlloc = (arr).size+(room); if ((arr).alloc<newAlloc) darray_realloc(arr, newAlloc); (arr).item+(arr).size; })
 #endif
 
+/*
 static inline size_t darray_next_alloc(size_t alloc, size_t need)
 {
 	if (alloc == 0)
@@ -278,7 +287,7 @@ static inline size_t darray_next_alloc(size_t alloc, size_t need)
 		alloc *= 2;
 	return alloc;
 }
-
+*/
 
 /*** Traversal ***/
 
