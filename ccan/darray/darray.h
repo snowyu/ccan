@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2011 Joseph Adams <joeyadams3.14159@gmail.com>
  *
+ * Modified and Enhanced by Riceball LEE <snowyu dot lee at gmail dot com>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
