@@ -29,19 +29,52 @@ static void memtile(void *dest, size_t destWidth, const void *src, size_t srcWid
 
 #include "testLits.h"
 
+int _free_count = 0;
+static void _arr_free_handler(void* aPtr) {
+    if (aPtr) {
+        _free_count++;
+        free(aPtr);
+    }
+}
+
 int main(void) {
 	darray(long) arr = darray_new();
 	darray_char str = darray_new();
+    darray(long*) arrp = darray_new();
+    arrp.free = _arr_free_handler;
 	#define reset(arr) do {darray_free(arr); darray_init(arr);} while(0)
 	size_t i;
 	
 	trace("Generating amalgams (internal)");
 	generateAmalgams();
 	
-	plan_tests(41);
+	plan_tests(45);
 	
 	testLits();
 	
+	testing(darray_pushptr);
+	{
+        int vMaxCount = 10;//ARRAY_SIZE(lotsOfNumbers);
+		for (int k=0; k < vMaxCount; k++) {
+            long* p = malloc(sizeof(long));
+            *p = lotsOfNumbers[k];
+			darray_push(arrp, p);
+        }
+		ok1(darray_size(arrp) == vMaxCount);
+		ok1(darray_alloc(arrp) >= darray_size(arrp));
+		long   **i;
+		size_t j = 0;
+		darray_foreach(i, arrp) {
+			if (i - arrp.item != j)
+				break;
+			if (**i != (long)lotsOfNumbers[j])
+				break;
+			j++;
+		};
+		ok1(j == vMaxCount);
+        darray_free_all(arrp);
+        ok1(_free_count == vMaxCount);
+	}
 	testing(darray_push);
 	{
 		for (i=0; i < ARRAY_SIZE(lotsOfNumbers); i++)
