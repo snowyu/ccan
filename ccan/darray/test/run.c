@@ -41,7 +41,7 @@ int main(void) {
 	darray(long) arr = darray_new();
 	darray_char str = darray_new();
     darray(long*) arrp = darray_new();
-    arrp.free = _arr_free_handler;
+    arrp.onFree = _arr_free_handler;
 	#define reset(arr) do {darray_free(arr); darray_init(arr);} while(0)
 	size_t i;
 	

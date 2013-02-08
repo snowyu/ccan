@@ -116,15 +116,15 @@
 
 /*** Life cycle ***/
 
-#define darray(type) struct {type *item; size_t size; size_t alloc;void (*free)(void *ptr);}
+#define darray(type) struct {type *item; size_t size; size_t alloc;void (*onFree)(void *ptr);}
 
 #define darray_new() {0,0,0,0}
-#define darray_init(arr) do {(arr).item=0; (arr).size=0; (arr).alloc=0;(arr).free=NULL;} while(0)
+#define darray_init(arr) do {(arr).item=0; (arr).size=0; (arr).alloc=0;(arr).onFree=NULL;} while(0)
 #define darray_free(arr) do {free((arr).item);darray_init(arr);} while(0)
 #define darray_free_all(arr) do {\
-        if((arr).free) {\
+        if((arr).onFree) {\
             for (int i = 0; i < (arr).size; i++) {\
-                if ((arr).item[i]) (arr).free((arr).item[i]); \
+                if ((arr).item[i]) (arr).onFree((arr).item[i]); \
             } \
         }\
         darray_free(arr);\
