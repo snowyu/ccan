@@ -1,5 +1,5 @@
 ALL_TOOLS = tools/configurator/configurator tools/ccan_depends tools/doc_extract tools/namespacize tools/ccanlint/ccanlint
-LDLIBS = -lrt
+#LDLIBS = -lrt
 DEP_OBJS = ccan/err/err.o \
 	ccan/foreach/foreach.o \
 	ccan/list/list.o \

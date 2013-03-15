@@ -78,9 +78,10 @@ then
 	exit 1
 fi
 
-tmpdir="$(mktemp -d)"
+tmpdir="$(mktemp -d -t ccan)"
 # sanity check, we don't want to be overwriting stuff in arbitrary dirs
 [ $? -eq 0 -a -d "${tmpdir}" ] || exit 1
+echo "Create tmpdir: ${tmpdir}"
 
 # We'll need the ccan_depends tool, but also a clean source tree. Build
 # tools/ccan_depends, and store it in $tmpdir for later use
