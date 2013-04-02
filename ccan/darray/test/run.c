@@ -48,7 +48,7 @@ int main(void) {
 	trace("Generating amalgams (internal)");
 	generateAmalgams();
 	
-	plan_tests(52);
+	plan_tests(54);
 	
 	testLits();
 	
@@ -96,6 +96,13 @@ int main(void) {
         ok1(!memcmp(arr.item+16, &lotsOfNumbers[14], ARRAY_SIZE(lotsOfNumbers)-(15*sizeof(long))));
 
 	}
+	testing(darray_del);
+	{
+        darray_del(arr, 15);
+        darray_del(arr, 0);
+		ok1(darray_size(arr) == ARRAY_SIZE(lotsOfNumbers));
+        ok1(!memcmp(arr.item, lotsOfNumbers, sizeof(lotsOfNumbers)));
+    }
 	reset(arr);
 	
 	testing(darray_prepend, darray_pop);

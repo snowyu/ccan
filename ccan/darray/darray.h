@@ -75,6 +75,7 @@
  *
  * Removal:
  *
+ *     void   darray_del(darray(T) arr, size_t index);
  *     T      darray_pop(darray(T) arr | darray_size(arr) != 0);
  *     T*     darray_pop_check(darray(T*) arr);
  *
@@ -247,6 +248,10 @@ typedef darray(unsigned long)  darray_ulong;
 
 /*** Removal ***/
 
+#define darray_del(arr, index) do { \
+        memmove((arr).item+index, (arr).item+index+1, ((arr).size-index-1)*sizeof(*(arr).item));\
+		(arr).size--; \
+	} while(0)
 /* Warning: Do not call darray_pop on an empty darray. */
 #define darray_pop(arr) ((arr).item[--(arr).size])
 #define darray_pop_check(arr) ((arr).size ? darray_pop(arr) : NULL)
